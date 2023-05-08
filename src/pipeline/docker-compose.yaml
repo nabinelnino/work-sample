@@ -13,7 +13,6 @@ x-airflow-common:
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
-    - ./plugins:/opt/airflow/plugins
     - ./db:/usr/local/airflow/db
 
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"

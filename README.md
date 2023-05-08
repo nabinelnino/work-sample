@@ -104,6 +104,15 @@ To run the pipeline, execute the `docker-compose up` file. The pipeline consists
                |                                  |
                +-----------------+----------------+
                                  |
+                                 | pyspark dataframe
+                                 |
+               +-----------------v----------------+
+               |    calculate vol_moving_avg and  |
+               |      adj_close_rolling_med       |
+               |                                  |
+               +-----------------+----------------+    
+                                 |
+                                 |
                                  | train
                                  |
                +-----------------v----------------+
@@ -120,7 +129,7 @@ To run the pipeline, execute the `docker-compose up` file. The pipeline consists
                |                                  |
                +-----------------+----------------+
                                  |
-                                 | schedule
+                                 | schedule tasks
                                  |
                +-----------------v----------------+
                |                                  |

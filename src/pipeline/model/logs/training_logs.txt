@@ -1,3 +1,22 @@
+Training stats of stocks data
+Training started at: 2023-05-07 14:55:51.927042
+Training set size: 400000
+Test set size: 100000
+Number of rounds: 49
+Minimum MAE: 457464.010588158
+Final MAE: 481599.3203103857
+Final MSE: 20131713093154.78
+
+Training stats of stocks data
+Training started at: 2023-05-07 16:02:36.628435
+Training set size: 3900649
+Test set size: 975163
+Number of rounds: 49
+Minimum MAE: 457727.2449617328
+Final MAE: 462565.28583829943
+Final MSE: 20508852630220.46
+
+Training stats of stocks data
 Training started at: 2023-05-08 01:46:39.687982
 Training set size: 15602
 Test set size: 3901

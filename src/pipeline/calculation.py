@@ -3,7 +3,8 @@ from pyspark.sql.window import Window
 from pyspark.sql.functions import input_file_name
 import pandas as pd
 import os
-from datetime import date
+import kaggle
+import zipfile
 from pyspark.sql.functions import regexp_replace, date_format, when, lit, col, avg, percentile_approx
 import sys
 import glob
@@ -16,7 +17,9 @@ os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 spark = SparkSession.builder.appName('Stock ETF Pipeline').getOrCreate()
 
 data_dir = os.path.abspath(os.path.join(os.getcwd(), 'data'))
+
 config_dict = {
+    "data": "/data/input_data/",
     "stocks_input": "/input_data/stocks/",
     "etfs_input": "/input_data/etfs/",
     "nos_file_to_process": 1000,
@@ -35,9 +38,16 @@ config_dict = {
     "stocks_parquet_location": "/processed_data/stocks/stocks.parquet",
     "etfs_parquet_location": "/processed_data/etfs/etfs.parquet",
 
-
     "symbols_meta_file": "/symbols_valid_meta.csv",
+    "KAGGLE_API": "/KAGGLE.json",
 }
+
+
+def download_data():
+    os.environ['KAGGLE_CONFIG_DIR'] = f"{data_dir}/{config_dict['KAGGLE_API']}"
+    kaggle.api.dataset_download_files("https://www.kaggle.com/datasets/jacksoncrow/stock-market-dataset")
+    with zipfile.ZipFile('stock-market-dataset.zip', 'r') as zip_ref:
+        zip_ref.extractall(f"{data_dir}/{config_dict['data']}")
 
 
 # Problem 1: Raw Data Processing
@@ -206,24 +216,11 @@ class FeatureEngineering:
         stocks_parquet_location = f"{data_dir}/{config_dict['stocks_parquet_location']}"
         etfs_parquet_location = f"{data_dir}/{config_dict['etfs_parquet_location']}"
         combined_parquet_location = f"{data_dir}/{config_dict['combined_parquet_location']}"
-        # self.calculate_moving_avg_and_rolling_median(combined_parquet_location)
-        # self.calculate_nos()
-        # location_file = [stocks_parquet_location, etfs_parquet_location]
-        # for file in location_file:
-        #     self.calculate_moving_avg_and_rolling_median(file)
-
-    def calculate_nos(self):
-        a = "/processed_data/task2/stocks_MA_RM/calculated.parquet"
-        calculated_combined_location = f"{data_dir}/{a}"
-        df = spark.read.parquet(calculated_combined_location)
-
-        # Count the number of rows in the DataFrame
-        row_count = df.count()
-        df.show(20)
-# total: 28151758, etfs: 3787455, stocks: 20033467
-
-        # Print the row count
-        print("Row count:", row_count)
+        self.calculate_moving_avg_and_rolling_median(combined_parquet_location)
+        self.calculate_nos()
+        location_file = [stocks_parquet_location, etfs_parquet_location]
+        for file in location_file:
+            self.calculate_moving_avg_and_rolling_median(file)
 
     def calculate_moving_avg_and_rolling_median(self, input_file):
         """
@@ -273,52 +270,3 @@ class FeatureEngineering:
 
         except Exception as e:
             raise CustomException(e, sys)
-
-def location():
-    data_dir = os.path.abspath(os.path.join(os.getcwd(), 'data'))
-    stocks_etfs_combined = config_dict["stocks_etfs_combined"]
-    file_path = os.path.join(data_dir, stocks_etfs_combined)
-    print(file_path)
-
-# if __name__ == "__main__":
-#     config_dict = {
-#         "stocks_input": "../data/input_data/stocks/",
-#         "etfs_input": "../data/input_data/etfs/",
-#         "nos_file_to_process": 1000,
-#         "stocks_output": "../data/processed_data/stocks/",
-#         "etfs_output": "../data/processed_data/etfs/",
-#
-#         "stocks_parquet": "../data/processed_data/stocks/stocks",
-#         "etfs_parquet": "../data/processed_data/etfs/",
-#         "stocks_etfs_combined": "../data/processed_data/task2/combined_file/",
-#
-#         "stocks_calculate": "../data/processed_data/task2/stocks_MA_RM/",
-#         "etfs_calculate": "../data/processed_data/task2/etfs_MA_RM/",
-#
-#         "stocks_parquet_location": "../data/processed_data/stocks/stocks.parquet",
-#         "etfs_parquet_location": "../data/processed_data/etfs/etfs.parquet",
-#
-#         "symbols_meta_file": "../data/symbols_valid_meta.csv",
-#     }
-# TaskOne(config_dict)
-# TaskTwo(config_dict)
-
-def count_csv_records():
-    folder_path = "C:/Users/elnin/Desktop/AI/Git Projects/work-sample/src/pipeline/data/input_data/stocks"
-
-    # Get the list of all CSV files in the folder
-    csv_files = [os.path.join(folder_path, file) for file in os.listdir(folder_path) if file.endswith(".csv")]
-    df = spark.read.option("header", "true").option("inferSchema", "true").csv(folder_path)
-    return print(df.count())
-
-# Count the number of records in all CSV files using map and reduce
-#     total_records = spark.sparkContext.parallelize(csv_files).map(count_csv_records).reduce(lambda a, b: a + b)
-
-# Print the total number of records
-# print("Total number of records:", total_records)
-
-if __name__ == "__main__":
-    # location()
-    # FeatureEngineering()
-    count_csv_records()
-    # TaskTwo()

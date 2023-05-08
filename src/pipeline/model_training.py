@@ -6,26 +6,9 @@ import joblib
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from datetime import datetime
 import os
-
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.feature_extraction import FeatureHasher
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import GridSearchCV
-from pathlib import Path
-
-
-def showdata():
-    # parquet_file_name = "../data/processed_data/test_stocks/stocks.parquet"
-    # parquet_file_name = f"../data/processed_data/stocks/stocks.parquet"
-    parquet_file_name = "../data/processed_data/Task2/stocks_MA_RM/calculated.parquet"
-    df_one = pd.read_parquet(parquet_file_name)
-    print("total form parquet", df_one.shape[0])
-    print(df_one.count())
-    print(df_one.head(10))
-    print(df_one.tail(20))
-
 
 def train_stocks_model():
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -215,10 +198,3 @@ def train_etfs_model():
         f.write(f'Final RMSE: {rmse}\n')
         f.write('\n')
 
-if __name__ == "__main__":
-    # train_stocks_model()
-    train_etfs_model()
-    # test()
-    # train_model_pyspark()
-
-    # showdata()

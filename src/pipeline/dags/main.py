@@ -6,55 +6,61 @@ from pathlib import Path
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 
-# Get the directory containing this file (my_dag.py)
-current_dir = os.path.dirname(os.path.abspath(__file__))
+from ..calculation import download_data, ConvertToStructured, FeatureEngineering
+from ..model_training import train_etfs_model, train_stocks_model
 
 # Add the parent directory (project) to the sys.path list
-project_dir = os.path.join(current_dir, '..')
-sys.path.append(project_dir)
-# from final import TaskTwo, TaskOne
-# Now you can import classes or modules from final.py
-from ..sample_file import TaskTwo, TaskOne
+default_args = {
+    'owner': 'airflow',
+    'start_date': datetime(2023, 5, 4),
+    'depends_on_past': False,
+}
 
-dag_path = os.getcwd()
-dag = DAG('dag_test', start_date=datetime.now())
+dag = DAG(
+    'Stocks ETFs Pipeline',
+    default_args=default_args,
+    description='Stocks/Etfs records for model predictions',
+    schedule_interval=None,
+)
 
-
-def task_one():
-    spark = SparkSession.builder.appName("Print PySpark version").getOrCreate()
-    # Import necessary libraries and classes
-    symbols_meta_file = f"{dag_path}/data/symbols_valid_meta.csv"
-
-    # Instantiate TaskOne class
-    t1 = TaskOne(symbols_meta_file)
-    output_dir = Path(f'{dag_path}/processed_data/one.parquet')
-    output_dir.mkdir(parents=True, exist_ok=True)
-    # Process data and save to processed_data folder
-    t1.process_data()
-
-
-def task_two():
-    # Import necessary libraries and classes
-    from simple_app.final import TaskTwo
-
-    # Instantiate TaskTwo class
-    t2 = TaskTwo()
-
-    # Process data and save to final_processed folder
-    t2.process_data()
-
-
-t1 = PythonOperator(
-    task_id='task_one',
-    python_callable=task_one,
+task_1 = PythonOperator(
+    task_id='transform_data',
+    python_callable= download_data(),
     dag=dag,
 )
 
-t2 = PythonOperator(
-    task_id='task_two',
-    python_callable=task_two,
+task_2 = PythonOperator(
+    task_id='load_data',
+    python_callable=ConvertToStructured,
+    op_args=["{{ ds }} {{ execution_date.hour }}"],
     dag=dag,
 )
 
-# Set task dependencies
-t1 >> t2
+task_3 = PythonOperator(
+    task_id='load_data',
+    python_callable=FeatureEngineering,
+    op_args=["{{ ds }} {{ execution_date.hour }}"],
+    dag=dag,
+)
+task_4 = PythonOperator(
+    task_id='load_data',
+    python_callable=FeatureEngineering,
+    op_args=["{{ ds }} {{ execution_date.hour }}"],
+    dag=dag,
+)
+task_5 = PythonOperator(
+    task_id='load_data',
+    python_callable=train_stocks_model(),
+    op_args=["{{ ds }} {{ execution_date.hour }}"],
+    dag=dag,
+)
+
+task_6 = PythonOperator(
+    task_id='load_data',
+    python_callable=train_etfs_model(),
+    op_args=["{{ ds }} {{ execution_date.hour }}"],
+    dag=dag,
+)
+
+
+task_1 >> task_1 >> task_3 >> task_4>> task_5>> task_6

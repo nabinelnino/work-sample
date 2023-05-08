@@ -72,3 +72,62 @@ To run the pipeline, execute the `docker-compose up` file. The pipeline consists
 
 ### To predict the volume using the machine learning model, navigate to the `src` and `pipeline` directories and execute the command `uvicorn app:app --reload`.
 
+               +----------------------------------+
+               |                                  |
+               |              Kaggle              |
+               |                                  |
+               +-----------------+----------------+
+                                 |
+                                 | download
+                                 |
+               +-----------------v----------------+
+               |                                  |
+               |            Raw Data              |
+               |           Processing             |
+               |                                  |
+               +-----------------+----------------+
+                                 |
+                                 | transform
+                                 |
+               +-----------------v----------------+
+               |                                  |
+               |       Moving Average & Rolling   |
+               |              Calculation         |
+               |                                  |
+               +-----------------+----------------+
+                                 |
+                                 | load
+                                 |
+               +-----------------v----------------+
+               |                                  |
+               |            STRUCTURED DATA        |
+               |                                  |
+               +-----------------+----------------+
+                                 |
+                                 | train
+                                 |
+               +-----------------v----------------+
+               |                                  |
+               |            Machine Learning       |
+               |                                  |
+               +-----------------+----------------+
+                                 |
+                                 | predict
+                                 |
+               +-----------------v----------------+
+               |                                  |
+               |            Application            |
+               |                                  |
+               +-----------------+----------------+
+                                 |
+                                 | schedule
+                                 |
+               +-----------------v----------------+
+               |                                  |
+               |              Airflow             |
+               |              Pipeline            |
+               |                                  |
+               +----------------------------------+ 
+
+
+

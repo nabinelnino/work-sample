@@ -1,0 +1,21 @@
+Training started at: 2023-05-08 01:46:39.687982
+Training set size: 15602
+Test set size: 3901
+Number of rounds: 49
+Minimum MAE: 435651.5567225268
+Final MAE: 1202199.1743207872
+Final MSE: 455671788711291.7
+Final R2: 0.5549985907936303
+Final RMSE: 21346470.169826478
+
+Training stats of etfs data
+Training started at: 2023-05-08 02:12:30.041533
+Training set size: 1488246
+Test set size: 372062
+Number of rounds: 49
+Minimum MAE: 469809.46661850007
+Final MAE: 470289.90954784007
+Final MSE: 13369991824040.5
+Final R2: 0.850053207900439
+Final RMSE: 3656499.9417531104
+

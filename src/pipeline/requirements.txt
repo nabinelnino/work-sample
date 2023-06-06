@@ -1,5 +1,6 @@
 anyio==3.6.2
 fastapi==0.95.1
+fastparquet==2023.4.0
 idna==3.4
 numpy==1.24.3
 pandas==2.0.1
@@ -15,5 +16,7 @@ tzdata==2023.3
 xgboost==1.7.5
 kaggle==1.5.13
 joblib==1.2.0
+uvicorn==0.22.0
+
 
 

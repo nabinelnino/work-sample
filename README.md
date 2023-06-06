@@ -71,6 +71,7 @@ To run the pipeline, execute the `docker-compose up` file. The pipeline consists
 
 
 ### To predict the volume using the machine learning model, navigate to the `src` and `pipeline` directories and execute the command `uvicorn app:app --reload`.
+### To predict the volume using the machine learning model, you can access this link `https://model-prediction.onrender.com/docs` which is hosted on Render
 
                +----------------------------------+
                |                                  |
